@@ -46,16 +46,22 @@ install() {
     #on the tool-bootstrap.sh we are installing aws cli, we need to add the Scripts folder to path
     echo "[post-install] [Remove pip Scripts folder from Path]"
     sed -i '/# pip_path/,/# \/pip_path/d' ~/.bash_profile
+    
+    #webapp/.husky/pre-commit: line 5: pnpx: command not found
+    npm install -g pnpm
 
     echo "[post-install] [Add pip Scripts folder to Path]"
     # Extract the installation location from the pip show output
     pip_path=$(pip show awscli | awk '/^Location:/ {print $2}' | sed -e 's/\\/\//g; s/^C:/\/c/; s/site-packages$/Scripts/')
     if [ -n "${pip_path}" ]; then
+    
     echo "  - pip package directory : ${pip_path}"
+    
     cat <<EOF >> ~/.bash_profile
 
 # pip_path
 export PATH=\${PATH}:${pip_path}
+alias pnpx='pnpm dlx'
 # /pip_path
 EOF
     fi
